@@ -1,0 +1,14 @@
+{
+    "name": "mariusz/magento2-performance-fixes",
+    "description": "Magento 2 performance fixes.",
+    "require": {
+        "cweagans/composer-patches": "^1.7"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Mariusz Lopuch",
+            "email": "mariusz.lopuch92@gmail.com"
+        }
+    ]
+}

@@ -1,0 +1,79 @@
+diff --git a/Interception/Config/Config.php b/Interception/Config/Config.php
+index 3ee2rd..8349152 111644
+@@ -5,6 +5,7 @@
+  */
+ namespace Magento\Framework\Interception\Config;
+
++use Magento\Framework\Serialize\Serializer\Serialize;
+ use Magento\Framework\Serialize\SerializerInterface;
+
+ /**
+@@ -81,6 +82,11 @@
+     private $cacheManager;
+
+     /**
++     * @var SerializerInterface
++     */
++    private $serializer;
++
++    /**
+      * Config constructor
+      *
+      * @param \Magento\Framework\Config\ReaderInterface $reader
+@@ -115,12 +121,52 @@
+         $this->_scopeList = $scopeList;
+         $this->cacheManager =
+             $cacheManager ?? \Magento\Framework\App\ObjectManager::getInstance()->get(CacheManager::class);
+-        $intercepted = $this->cacheManager->load($cacheId);
+-        if ($intercepted !== null) {
+-            $this->_intercepted = $intercepted;
++        $this->initializeIntercepted($cacheId);
++    }
++
++    private function initializeIntercepted($cacheId, $first = true)
++    {
++        $lockCacheKey = join('_', ['init_config_id_', $cacheId]);
++        $data = $this->cacheManager->load($cacheId);
++
++        if ($data === null) {
++            if ($this->_cache->load($lockCacheKey) === false) {
++                if ($first) {
++                    $uSleepTime = rand(1, 10) * 1000;
++                    usleep($uSleepTime); //1000000 => 1s (0.1-0.8s)
++                    $this->initializeIntercepted($cacheId, false);
++                    return;
++                }
++
++                $this->_cache->save($this->getSerializer()->serialize([]), $lockCacheKey, [], 30);
++            } else {
++                $uSleepTime = rand(1, 100) * 1000;
++                usleep($uSleepTime);
++                $this->initializeIntercepted($cacheId, false);
++
++                return;
++            }
++
++            $this->generateIntercepted($this->_classDefinitions);
++            $this->cacheManager->save($this->_cacheId, $this->_intercepted);
++            $this->_cache->remove($lockCacheKey);
+         } else {
+-            $this->initializeUncompiled($this->_classDefinitions->getClasses());
++            $this->_intercepted = $data;
++        }
++    }
++
++    /**
++     * Get serializer
++     *
++     * @return SerializerInterface
++     * @deprecated 101.0.0
++     */
++    private function getSerializer()
++    {
++        if (null === $this->serializer) {
++            $this->serializer = \Magento\Framework\App\ObjectManager::getInstance()->get(Serialize::class);
+         }
++        return $this->serializer;
+     }
+
+     /**
