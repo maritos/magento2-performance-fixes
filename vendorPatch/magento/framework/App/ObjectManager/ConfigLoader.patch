@@ -1,0 +1,37 @@
+diff --git a/App/ObjectManager/ConfigLoader.php b/App/ObjectManager/ConfigLoader.php
+index 3ee2rd..8349152 111644
+@@ -67,14 +67,32 @@
+     /**
+      * {inheritdoc}
+      */
+-    public function load($area)
++    public function load($area, $first = true)
+     {
+         $cacheId = $area . '::DiConfig';
++        $lockCacheKey = join('_', ['init_config_id_', $cacheId]);
++
+         $data = $this->_cache->load($cacheId);
++        $first = false;
++
++        if ($data === false) {
++            if ($this->_cache->load($lockCacheKey) === false) {
++                if ($first) {
++                    $uSleepTime = rand(1, 10) * 1000;
++                    usleep($uSleepTime); //1000000 => 1s (0.1-0.8s)
++                    return $this->load($area, false);
++                }
++
++                $this->_cache->save($this->getSerializer()->serialize([]), $lockCacheKey, [], 30);
++            } else {
++                $uSleepTime = rand(1, 100) * 1000;
++
++                return $this->load($area, false);
++            }
+
+-        if (!$data) {
+             $data = $this->_getReader()->read($area);
+             $this->_cache->save($this->getSerializer()->serialize($data), $cacheId);
++            $this->_cache->remove($lockCacheKey);
+         } else {
+             $data = $this->getSerializer()->unserialize($data);
+         }

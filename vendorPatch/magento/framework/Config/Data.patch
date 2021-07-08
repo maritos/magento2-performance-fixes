@@ -1,0 +1,37 @@
+diff --git a/Config/Data.php b/Config/Data.php
+index 3ee2rd..8349152 111644
+@@ -98,12 +98,33 @@
+      *
+      * @return void
+      */
+-    protected function initData()
++    protected function initData($first = true)
+     {
++        $lockCacheKey = join('_', ['init_config_id_', $this->cacheId]);
+         $data = $this->cache->load($this->cacheId);
++
+         if (false === $data) {
++            if ($this->cache->load($lockCacheKey) === false) {
++                if ($first) {
++                    $uSleepTime = rand(1, 10) * 1000;
++                    usleep($uSleepTime);
++                    $this->initData(false);
++
++                    return;
++                }
++
++                $this->cache->save($this->serializer->serialize([]), $lockCacheKey, [], 30);
++            } else {
++                $uSleepTime = rand(1, 100) * 1000;
++                usleep($uSleepTime);
++                $this->initData(false);
++
++                return;
++            }
++
+             $data = $this->reader->read();
+             $this->cache->save($this->serializer->serialize($data), $this->cacheId, $this->cacheTags);
++            $this->cache->remove($lockCacheKey);
+         } else {
+             $data = $this->serializer->unserialize($data);
+         }
