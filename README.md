@@ -9,6 +9,8 @@ It's not hard to imagine situation that when some process is slow and takes for 
 
 IMPORTANT: **Testing just one request (without high concurrency) you likly won't achive any speed improvments.**
 
+![Conecept](https://i.ibb.co/dp2P2Pn/concept-problem-solve.png)
+
 # Requirements
 
 One dependancy: `cweagans/composer-patches`
