@@ -44,7 +44,7 @@ install package by composer:
             "magento/framework": {
                 "performance fix #1 - vendor/magento/framework/Config/Data.php": "vendor/maritos/magento2-performance-fixes/vendorPatch/magento/framework/Config/Data.patch",
                 "performance fix #2 - vendor/magento/framework/App/ObjectManager/ConfigLoader.patch": "vendor/maritos/magento2-performance-fixes/vendorPatch/magento/framework/App/ObjectManager/ConfigLoader.patch",
-                "performance fix #3 - vendor/magento/framework/Interception/Config/Config.patch": "vendorPatch/magento/framework/Interception/Config/Config-2.4.x.patch"
+                "performance fix #3 - vendor/magento/framework/Interception/Config/Config.patch": "vendor/maritos/magento2-performance-fixes/vendorPatch/magento/framework/Interception/Config/Config.patch"
             }
         }
     }
