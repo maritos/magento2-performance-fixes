@@ -1,5 +1,7 @@
 diff --git a/Config/Data.php b/Config/Data.php
 index 3ee2rd..8349152 111644
+--- a/Config/Data.php
++++ b/Config/Data.php
 @@ -98,12 +98,33 @@
       *
       * @return void
