@@ -1,5 +1,7 @@
 diff --git a/App/ObjectManager/ConfigLoader.php b/App/ObjectManager/ConfigLoader.php
 index 3ee2rd..8349152 111644
+--- a/App/ObjectManager/ConfigLoader.php
++++ b/App/ObjectManager/ConfigLoader.php
 @@ -67,14 +67,32 @@
      /**
       * {inheritdoc}
